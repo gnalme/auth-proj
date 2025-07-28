@@ -1,0 +1,36 @@
+@{
+    ViewData["Title"] = "Register";
+    Layout = "_Layout";
+}
+
+<div class="d-flex vh-100">
+    <div class="w-50 d-flex align-items-center justify-content-center bg-light">
+        <div class="container" style="max-width: 400px;">
+            <h2 class="mb-4">Sign Up To The App</h2>
+            <form method="post">
+                <div class="mb-3">
+                    <label>Name</label>
+                    <input type="text" name="name" class="form-control" required/>
+                </div>
+                <div class="mb-3">
+                    <label>Email</label>
+                    <input type="email" name="email" class="form-control" required/>
+                </div>
+                <div class="mb-3">
+                    <label>Password</label>
+                    <input type="password" name="password" class="form-control" required/>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2 mt-2">Register</button>
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                        @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+            </form>
+        </div>
+    </div>
+
+    <div class="w-50 right-side"></div>
+</div>
