@@ -107,7 +107,7 @@ public class AccountController : Controller
         
         var resetLink = Url.Action("ResetPassword", "Account", new { token = user.PasswordResetToken }, Request.Scheme);
         
-        TempData["Success"] = $"<p>Link to reset password: <a href='{resetLink}' target='_blank'>{resetLink}</a></p>";
+        TempData["Success"] = resetLink;
         return View();
     }
 
