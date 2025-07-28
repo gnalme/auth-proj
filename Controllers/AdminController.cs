@@ -56,6 +56,7 @@ public class AdminController : Controller
     {
         var users = _context.Users.Where(u => ids.Contains(u.Id)).ToList();
         users.ForEach(u => u.IsDeleted = true);
+        _context.Users.RemoveRange(users);
         await _context.SaveChangesAsync();
         return RedirectToAction("Users");
     }
