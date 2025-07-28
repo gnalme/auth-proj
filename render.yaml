@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: itransition-app
+    runtime: dotnet
+    repo: https://github.com/gnalme/auth-proj.git
+    branch: main
+    buildCommand: dotnet publish -c Release -o out
+    startCommand: dotnet out/ItransitionAuthentication.dll
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        sync: false 
