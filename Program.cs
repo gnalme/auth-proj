@@ -22,6 +22,16 @@ builder.Services.AddSession();
 
 var app = builder.Build();
 
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/")
+    {
+        context.Response.Redirect("/account/login");
+        return;
+    }
+    await next();
+});
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
