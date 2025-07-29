@@ -1,23 +1,20 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
+﻿# Используем официальный образ .NET 8 (вместо 9 — пока он в preview)
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
+
+# Копируем .csproj файл из корня
+COPY *.csproj ./
+RUN dotnet restore
+
+# Копируем остальную часть проекта
+COPY . . 
+RUN dotnet publish -c Release -o out
+
+# Runtime образ
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+COPY --from=build /app/out .
+
+# Указываем порт и точку входа
 EXPOSE 8080
-EXPOSE 8081
-
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["ItransitionAuthentication/ItransitionAuthentication.csproj", "ItransitionAuthentication/"]
-RUN dotnet restore "ItransitionAuthentication/ItransitionAuthentication.csproj"
-COPY . .
-WORKDIR "/src/ItransitionAuthentication"
-RUN dotnet build "ItransitionAuthentication.csproj" -c $BUILD_CONFIGURATION -o /app/build
-
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "ItransitionAuthentication.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "ItransitionAuthentication.dll"]
