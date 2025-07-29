@@ -68,6 +68,11 @@ public class AccountController : Controller
 
         if (exists != null)
         {
+            if (exists.IsBlocked)
+            {
+                TempData["error"] = "This account is blocked and cannot be reactivated.";
+                return RedirectToAction("Login");
+            }
             if (!exists.IsDeleted)
             {
                 ViewBag.Error = "User with this email already exists";
@@ -150,6 +155,11 @@ public class AccountController : Controller
         {
             TempData["Error"] = "The link is invalid or outdated";
             return RedirectToAction("ForgotPassword");
+        }
+        if (user.IsBlocked || user.IsDeleted)
+        {
+            TempData["Error"] = "Your account is blocked or deleted.";
+            return RedirectToAction("Login");
         }
 
         user.Password = newPassword; 

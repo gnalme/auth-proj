@@ -36,7 +36,13 @@ public class AdminController : Controller
     [HttpPost("block")]
     public async Task<IActionResult> Block([FromForm] int[] ids)
     {
-        var users = _context.Users.Where(u => ids.Contains(u.Id)).ToList();
+        var currentUser = _context.Users.FirstOrDefault(u => u.Email == User.Identity!.Name);
+        if (currentUser == null) return RedirectToAction("Users");
+
+        var users = _context.Users
+            .Where(u => ids.Contains(u.Id))
+            .ToList();
+
         users.ForEach(u => u.IsBlocked = true);
         await _context.SaveChangesAsync();
         return RedirectToAction("Users");
@@ -45,7 +51,13 @@ public class AdminController : Controller
     [HttpPost("unblock")]
     public async Task<IActionResult> Unblock([FromForm] int[] ids)
     {
-        var users = _context.Users.Where(u => ids.Contains(u.Id)).ToList();
+        var currentUser = _context.Users.FirstOrDefault(u => u.Email == User.Identity!.Name);
+        if (currentUser == null) return RedirectToAction("Users");
+        
+        var users = _context.Users
+            .Where(u => ids.Contains(u.Id) && u.Id != currentUser.Id)
+            .ToList();
+
         users.ForEach(u => u.IsBlocked = false);
         await _context.SaveChangesAsync();
         return RedirectToAction("Users");
@@ -54,7 +66,13 @@ public class AdminController : Controller
     [HttpPost("delete")]
     public async Task<IActionResult> Delete([FromForm] int[] ids)
     {
-        var users = _context.Users.Where(u => ids.Contains(u.Id)).ToList();
+        var currentUser = _context.Users.FirstOrDefault(u => u.Email == User.Identity!.Name);
+        if (currentUser == null) return RedirectToAction("Users");
+
+        var users = _context.Users
+            .Where(u => ids.Contains(u.Id) && u.Id != currentUser.Id)
+            .ToList();
+
         users.ForEach(u => u.IsDeleted = true);
         _context.Users.RemoveRange(users);
         await _context.SaveChangesAsync();
