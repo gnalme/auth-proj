@@ -100,6 +100,12 @@ public class AccountController : Controller
             TempData["Error"] = "Email address not found!";
             return RedirectToAction("Login");
         }
+
+        if (user.IsBlocked || user.IsDeleted)
+        {
+            TempData["Error"] = "User is blocked or deleted!";
+            return RedirectToAction("Login");
+        }
         
         user.PasswordResetToken = Guid.NewGuid();
         user.TokenExpiration = DateTime.UtcNow.AddMinutes(30);
@@ -122,6 +128,12 @@ public class AccountController : Controller
             TempData["Error"] = "The link is invalid or outdated";
             return RedirectToAction("ForgotPassword");
         }
+        if (user.IsBlocked || user.IsDeleted)
+        {
+            TempData["Error"] = "Your account is blocked or deleted.";
+            return RedirectToAction("Login");
+        }
+
 
         ViewBag.Token = token;
         return View();
